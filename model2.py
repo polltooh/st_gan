@@ -190,5 +190,5 @@ class STGan(object):
                 sum_writer.add_summary(summ_v, i)
                 print("iter: %d, d_loss: %.3f, g_loss: %.3f"%(i, d_loss_v, g_loss_v))
 
-            if i != 0 and (i %1000 == 0 or i = FLAGS.max_training_iter - 1):
-                sf.save_model(sess, saver, FLAGS.model_dir, i)
+            if i != 0 and (i %1000 == 0 or i == self.max_training_iter - 1):
+                sf.save_model(sess, saver, self.model_dir, i)
