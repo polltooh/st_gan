@@ -1,12 +1,14 @@
 batch_size: 20
 code_len: 100
-st_len: 30
-iheight: 128
+st_len: 50
+iheight: 128 
 iwidth: 128
 code_len: 100
-init_learning_rate: 0.0001
-max_training_iter:100000
+init_learning_rate: 0.000001
+max_training_iter:1000000
 train_log_dir:st_gan_log
-file_name:file_list/list1.txt
-g_iter:10
+file_name:file_list/train_list1.txt
+model_dir:model/
+restore_model:False
+g_iter:5
 d_iter:1

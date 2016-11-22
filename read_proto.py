@@ -10,6 +10,10 @@ def load_proto(file_name):
             val = float(val)
             if val.is_integer():
                 val = int(val)
+        if val == 'true' or val == "True":
+            val = True
+        if val == 'false' or val == "False":
+            val = False
 
         model_param[name] = val
     return model_param

@@ -1,4 +1,4 @@
-from model import STGan as model
+from model2 import STGan as model
 import read_proto as rp
 
 if __name__ == "__main__":
