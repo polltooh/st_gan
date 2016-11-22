@@ -1,5 +1,6 @@
 import tensorflow as tf
 import save_func as sf
+import cv2
 import tensor_data
 import data_class
 import model_func as mf
@@ -65,7 +66,7 @@ class STGan(object):
 
         file_queue = tensor_data.file_queue(file_name, is_train)
         batch_tensor_list = tensor_data.file_queue_to_batch_data(file_queue, tensor_list, 
-                                is_train, self.bsize)
+                                is_train, self.bsize, False)
 
         self.st_data = batch_tensor_list[0]
         self.image_data = batch_tensor_list[1]
@@ -76,19 +77,22 @@ class STGan(object):
         with tf.variable_scope("G"):
             rf2 = mf.add_leaky_relu(mf.fully_connected_layer(self.ran_code_ph, 8 * 8 * 64, wd, "fc2"), leaky_param)
             rf3 = tf.reshape(rf2, [self.bsize, 8, 8, 64], name = "fc3")
-            rdeconv1 = mf.add_leaky_relu(mf.deconvolution_2d_layer(rf3, [2, 2, 64, 64], 
-                [2,2], [self.bsize, 16, 16, 64], "VALID", wd, "deconv1"), leaky_param)
+            rdeconv1 = mf.add_leaky_relu(mf.deconvolution_2d_layer(rf3, [2, 2, 128, 64], 
+                [2,2], [self.bsize, 16, 16, 128], "VALID", wd, "deconv1"), leaky_param)
 
-            rdeconv2 = mf.add_leaky_relu(mf.deconvolution_2d_layer(rdeconv1, [2, 2, 64, 64], 
-                            [2,2], [self.bsize, 32, 32, 64], "VALID", wd, "deconv2"), leaky_param)
-            deconv1 = mf.add_leaky_relu(mf.deconvolution_2d_layer(rdeconv2, [2, 2, 128, 64], 
-                            [2,2], [self.bsize, 64, 64, 128], "VALID", wd, "deconv3"), leaky_param)
+            rdeconv2 = mf.add_leaky_relu(mf.deconvolution_2d_layer(rdeconv1, [2, 2, 256, 128], 
+                            [2,2], [self.bsize, 32, 32, 256], "VALID", wd, "deconv2"), leaky_param)
+            deconv1 = mf.add_leaky_relu(mf.deconvolution_2d_layer(rdeconv2, [2, 2, 512, 256], 
+                            [2,2], [self.bsize, 64, 64, 512], "VALID", wd, "deconv3"), leaky_param)
 
-            deconv2 = mf.add_leaky_relu(mf.deconvolution_2d_layer(deconv1, [2, 2, 64, 128], 
-                            [2,2], [self.bsize, 128, 128, 64], "VALID", wd, "deconv4"), leaky_param)
-            conv1 = mf.convolution_2d_layer(deconv2, [1, 1, 64, 1], [1,1], "SAME", wd, "conv1")
-            self.g_image = tf.tanh(conv1)
+            deconv2 = mf.add_leaky_relu(mf.deconvolution_2d_layer(deconv1, [2, 2, 512, 512], 
+                            [2,2], [self.bsize, 128, 128, 512], "VALID", wd, "deconv4"), leaky_param)
+            conv1 = mf.convolution_2d_layer(deconv2, [1, 1, 512, 1], [1,1], "SAME", wd, "conv1")
+
+            self.g_image = tf.sigmoid(conv1, "g_image")
+
             tf.add_to_collection("image_to_write", self.g_image)
+            tf.add_to_collection("image_to_write", self.image_data_ph)
 
         with tf.variable_scope("D"):
             concat = tf.concat(0, [self.g_image, self.image_data_ph])
@@ -165,7 +169,6 @@ class STGan(object):
 
         for i in xrange(self.max_training_iter):
             train_st_data_v, train_image_data_v = sess.run([self.st_data, self.image_data])
-
             #train_image_data_v = np.random.uniform(-1, 1, (self.bsize, self.iheight, self.iwidth, 1))
             #train_st_data_v = np.random.uniform(-1, 1, (self.bsize, self.st_len))
 
