@@ -2,3 +2,9 @@ data/
 st_gan_log/
 gen_file_list/
 file_list/
+./tensor_data.py
+./gen_file_list/file_io.py
+./save_func.py
+./file_io.py
+./data_class.py
+./model_func.py
