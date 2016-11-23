@@ -1,7 +1,10 @@
 import file_io
+import os
 
-train_file_name = "/home/mscvadmin/eye_img_st/file_list/train_list1.txt"
-test_file_name = "/home/mscvadmin/eye_img_st/file_list/train_list2.txt"
+data_dir = "/home/geoff/eye_data/2016_11_18_14_17_2_extract/"
+
+train_file_name = "/home/geoff/eye_data/file_list/train_list1.txt"
+test_file_name = "/home/geoff/eye_data/file_list/test_list1.txt"
 
 
 def get_image_list(file_name):
@@ -9,7 +12,10 @@ def get_image_list(file_name):
     return_list = list()
     for f in f_list:
         f_l = f.split(" ")
-        return_list.append(f_l[0] + " " + f_l[1])
+        b_name = os.path.basename(f_l[0])
+        st_name = data_dir + b_name
+        img_name = data_dir + b_name.replace("_st.data", "_1.jpg")
+        return_list.append(st_name + " " + img_name)
     return return_list
 
 train_list = get_image_list(train_file_name)

@@ -1,15 +1,13 @@
-batch_size: 20
-code_len: 100
+batch_size: 32
 st_len: 50
 iheight: 128 
 iwidth: 128
 code_len: 100
 init_learning_rate: 0.000001
 max_training_iter:1000000
-train_log_dir:st_gan_log
+train_log_dir:st_gan_log3/
 file_name:file_list/train_list1.txt
-model_dir:model/
-model:model3
+model_dir:model3/
 restore_model:False
 g_iter:5
 d_iter:1
